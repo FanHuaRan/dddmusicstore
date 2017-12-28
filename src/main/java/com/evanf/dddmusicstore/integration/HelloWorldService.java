@@ -19,13 +19,30 @@ package com.evanf.dddmusicstore.integration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.google.common.base.Optional;
+
+import io.swagger.models.Swagger;
+import springfox.documentation.service.Documentation;
+import springfox.documentation.spring.web.DocumentationCache;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.mappers.ServiceModelToSwagger2Mapper;
+
 @Component
 public class HelloWorldService {
+	@Autowired
+	private DocumentationCache documentationCache;
+
+	@Autowired
+	private ServiceModelToSwagger2Mapper mapper;
 
 	@Autowired
 	private ServiceProperties configuration;
 
 	public String getHelloMessage(String name) {
+		String groupName = Optional.fromNullable("").or(Docket.DEFAULT_GROUP_NAME);
+		Documentation documentation = documentationCache.documentationByGroup(groupName);
+		Swagger swagger = mapper.mapDocumentation(documentation);
+
 		return this.configuration.getGreeting() + " " + name;
 	}
 
